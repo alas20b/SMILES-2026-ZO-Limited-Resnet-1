@@ -25,5 +25,17 @@ We systematically explored:
 To reproduce current best solution, run:
 python validate.py --data_dir ./data --batch_size 32 --n_batches 256 --output results.json 
 
-It iakes about 7 hours
+It iakes about 7 hours. You should receive the following results:
+{
+  "val_accuracy_top1_imagenet_head": 0.0037,
+  "val_accuracy_top1_init_head": 0.0121,
+  "val_accuracy_top1_finetuned": 0.0139,
+  "n_batches": 256,
+  "batch_size": 32,
+  "layers_tuned": [
+    "fc.weight",
+    "fc.bias"
+  ],
+  "total_samples": 10000
+}
 Conclusion: Within the strict budget of 8192 forward passes, zero‑order optimisation can only marginally improve the randomly initialised head. The main limitation is the high variance of gradient estimates, which cannot be fully compensated by repeated sampling without exceeding the budget.
