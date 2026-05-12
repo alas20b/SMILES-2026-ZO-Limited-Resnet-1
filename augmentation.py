@@ -9,10 +9,25 @@ input expected by the pretrained ResNet18 backbone.
 """
 
 import torchvision.transforms as T
+from torchvision.transforms import AutoAugment, AutoAugmentPolicy
+import torch
 
 # Per-channel mean and std computed on the CIFAR100 training set.
 _CIFAR100_MEAN = (0.5071, 0.4867, 0.4408)
 _CIFAR100_STD = (0.2675, 0.2565, 0.2761)
+
+
+class AddGaussianNoise:
+    """Add Gaussian noise to a tensor (assumed to be in [0,1] or normalized)."""
+    def __init__(self, mean=0.0, std=0.05):
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, tensor):
+        return tensor + torch.randn_like(tensor) * self.std + self.mean
+
+    def __repr__(self):
+        return self.__class__.__name__ + f"(mean={self.mean}, std={self.std})"
 
 
 def get_transforms(train: bool) -> T.Compose:
@@ -47,10 +62,15 @@ def get_transforms(train: bool) -> T.Compose:
                 # between or around them as appropriate.
                 # ----------------------------------------------------------
                 T.Resize(224),
+                T.RandomCrop(224, padding=28),
+                AutoAugment(AutoAugmentPolicy.CIFAR10),
                 T.RandomHorizontalFlip(),
-                # Add more augmentations here ↓
+                T.RandomRotation(degrees=15),
+                T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
                 T.ToTensor(),
                 T.Normalize(mean=_CIFAR100_MEAN, std=_CIFAR100_STD),
+                T.RandomErasing(p=0.2, scale=(0.02, 0.2), ratio=(0.3, 3.3)),
+                AddGaussianNoise(mean=0.0, std=0.05),
                 # ----------------------------------------------------------
             ]
         )

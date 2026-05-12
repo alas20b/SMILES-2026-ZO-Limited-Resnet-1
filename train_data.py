@@ -3,7 +3,7 @@ import torchvision.datasets as datasets
 
 from augmentation import get_transforms
 
-USE_TRAIN_SUBSET_ONLY=True
+USE_TRAIN_SUBSET_ONLY = True
 
 def get_train_dataset_loader(
     data_dir,
@@ -22,9 +22,10 @@ def get_train_dataset_loader(
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=0,
+        num_workers=4,          # EDIT: increased for speed
         pin_memory=True,
-        generator=generator_train
+        generator=generator_train,
+        persistent_workers=True   # EDIT: keep workers alive (PyTorch >=1.7)
     )
 
     return train_dataset, train_loader

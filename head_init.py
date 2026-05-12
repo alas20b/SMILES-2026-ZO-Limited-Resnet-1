@@ -32,6 +32,10 @@ def init_last_layer(layer: nn.Linear) -> None:
     # -------------------------------------------------------------------------
     # STUDENT: Replace or extend the initialization below.
     # -------------------------------------------------------------------------
-    nn.init.kaiming_uniform_(layer.weight, nonlinearity="relu")
-    nn.init.zeros_(layer.bias)
+    # EDIT: Use Kaiming uniform (He) with small scaling factor for stable start.
+    nn.init.kaiming_uniform_(layer.weight, a=0, mode='fan_in', nonlinearity='relu')
+    # Scale weights down to avoid overly confident predictions
+    layer.weight.data *= 0.1
+    if layer.bias is not None:
+        nn.init.zeros_(layer.bias)
     # -------------------------------------------------------------------------
