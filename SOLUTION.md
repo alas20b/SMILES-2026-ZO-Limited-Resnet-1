@@ -22,4 +22,8 @@ We systematically explored:
 5) Repeated SPSA with 16 estimates – yielded a slight but consistent improvement (1.39%).
 6) Repeated SPSA with 64 estimates – theoretically better, but training time became impractical (>20 hours).
 
+To reproduce current best solution, run:
+python validate.py --data_dir ./data --batch_size 32 --n_batches 256 --output results.json 
+
+It iakes about 7 hours
 Conclusion: Within the strict budget of 8192 forward passes, zero‑order optimisation can only marginally improve the randomly initialised head. The main limitation is the high variance of gradient estimates, which cannot be fully compensated by repeated sampling without exceeding the budget.
